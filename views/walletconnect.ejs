@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Connect</title>
+    <link rel="stylesheet" href="https://unpkg.com/@salesforce-ux/design-system/assets/styles/salesforce-lightning-design-system.min.css">
+    <style>
+        body {
+            font-family: 'Salesforce Sans', Arial, sans-serif;
+        }
+        .slds-container--medium {
+            margin: 2rem auto;
+            max-width: 40rem;
+        }
+        .slds-form-element__label {
+            margin-bottom: 0.5rem;
+        }
+        .slds-button {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="slds-scope">
+    <div class="slds-container--medium slds-box slds-theme--default">
+        <h1 class="slds-text-heading--large slds-text-align--center">Wallet Connect</h1>
+        <form class="slds-form--stacked">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="wallet_address">Wallet Address</label>
+                <div class="slds-form-element__control">
+                    <input type="text" id="wallet_address" class="slds-input" placeholder="My Wallet Address" readonly>
+                </div>
+            </div>
+        </form>
+        <div id="app" class="slds-m-top--large">
+            <w3m-button></w3m-button>
+        </div>
+    </div>
+    <script type="module" src="/src/wallet_connect/wallet_connect/bundle.js"></script>
+</body>
+</html>

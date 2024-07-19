@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Connect Wallet</title>
+    <link rel="stylesheet" href="https://unpkg.com/@salesforce-ux/design-system/assets/styles/salesforce-lightning-design-system.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f6f9;
+        }
+        img {
+            width: 100px; /* Set image width */
+            height: 100px; /* Set image height */
+            margin-bottom: 20px;
+        }
+        .slds-container_x-large {
+            width: 80%;
+            height: 50%;
+            min-width: 600px;
+            min-height: 400px;
+        }
+        .slds-card {
+            padding: 20px;
+        }
+        .slds-button {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .progress-step,
+        .error-message {
+            text-align: left;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        .fa-spinner,
+        .fa-check,
+        .fa-times-circle {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .account-list {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .checkbox {
+            margin-right: 10px;
+        }
+        .submit-button,
+        .retry-button {
+            margin-top: 20px;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://static-00.iconduck.com/assets.00/xrp-cryptocurrency-icon-2048x2048-2a0bicgj.png" alt="XRP Logo">
+    <div class="slds-container_x-large slds-container_center slds-m-around_x-large">
+        <div class="slds-card">
+            <header class="slds-card__header slds-grid">
+                <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-standard-account">
+                            <!-- <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#wallet"></use>
+                            </svg> -->
+                        </span>
+                    </div>
+                    <div class="slds-media__body">
+                        <h2 class="slds-card__header-title">Connect to Wallet</h2>
+                    </div>
+                </div>
+            </header>
+            <div class="slds-card__body slds-card__body_inner">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="wallet-type">Select Wallet Type</label>
+                    <div class="slds-form-element__control">
+                        <select class="slds-select" id="wallet-type">
+                            <option value="">Please select...</option>
+                            <option value="xumm">Xumm</option>
+                            <option value="ledger">Ledger</option>
+                            <option value="address">Address</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="wallet-info" class="slds-m-top_medium"></div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="/src/wallet_connect/xrp_wallet_connect/bundle.js"></script>
+</body>
+</html>
