@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet Connect - Home</title>
+    <link rel="stylesheet" href="https://unpkg.com/@salesforce-ux/design-system/assets/styles/salesforce-lightning-design-system.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .slds-container--medium {
+            width: 100%;
+            max-width: 40rem;
+        }
+        .welcome-banner {
+            background-color: #16325c;
+            color: white;
+            padding: 1rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+        .welcome-banner h1 {
+            margin: 0;
+            color: #FFB75D;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .footer a {
+            color: #FFB75D;
+        }
+        .wallet-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .wallet-selection .slds-button {
+            width: auto; /* Makes buttons only as wide as their content */
+        }
+    </style>
+</head>
+<body class="slds-scope">
+    <div class="slds-container--medium">
+        <div class="welcome-banner">
+            <h1>Welcome to Wallet Connect</h1>
+            <p>Securely connect your wallet through our service.</p>
+        </div>
+        <div class="slds-p-around_medium">
+            <!-- Getting Started Card -->
+            <article class="slds-card slds-m-bottom_medium">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-account">
+                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                    <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                Get Started
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner slds-text-longform">
+                    <p>To begin using Wallet Connect, follow the setup instructions on our GitHub repository:</p>
+                    <a href="https://github.com/spencergoldberg1/Wallet-Connect" target="_blank" class="slds-button slds-button_neutral">
+                        GitHub Repository
+                    </a>
+                </div>
+            </article>
+
+            <!-- Wallet Selection Card -->
+            <article class="slds-card slds-m-bottom_medium">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-connected_apps">
+                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                    <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#connected_apps"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                Choose Your Wallet Type
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner slds-text-longform">
+                    <p>Connect with the type of wallet you use:</p>
+                    <div class="wallet-selection">
+                        <a href="/wallet_connect/evm" class="slds-button slds-button_brand">Connect EVM Wallet</a>
+                        <a href="/wallet_connect/xrp" class="slds-button slds-button_brand">Connect XRP Wallet</a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Contact Card -->
+            <article class="slds-card">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-case">
+                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                    <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#case"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div class="slds-media__body">
+                            <h2 class="slds-card__header-title">
+                                Contact Us
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body slds-card__body_inner slds-text-longform">
+                    <p>If you have any questions or need further assistance, please reach out to our support team through the contact details provided on our GitHub page.</p>
+                </div>
+            </article>
+        </div>
+        <footer class="footer">
+            <p>Visit our <a href="https://spencergoldberg.com" target="_blank">personal website</a> to learn more.</p>
+        </footer>
+    </div>
+</body>
+</html>

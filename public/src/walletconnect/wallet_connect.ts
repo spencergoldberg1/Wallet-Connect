@@ -1,7 +1,7 @@
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers";
 
 // 1. Get projectId from https://cloud.walletconnect.com
-const projectId = process.env.PROJECT_ID;
+const projectId = process.env.WALLET_CONNECT_PROJECT_ID;
 
 // 2. Set chains
 const mainnet = {
@@ -77,13 +77,19 @@ const modal = createWeb3Modal({
   }
 });
 
-modal.subscribeProvider((e) => {
-  const inputElement = document.getElementById(
-    "wallet_address"
-  ) as HTMLInputElement;
+modal.subscribeProvider((e: { address?: string }) => {
+  const inputElement = document.getElementById("wallet_address") as HTMLInputElement | null;
 
-  // Check if the element is not null (i.e., it exists in the DOM)
+  // Check if the input element exists in the DOM
   if (inputElement) {
-    inputElement.value = e.address || ""; // Set the value to an empty string
+    inputElement.value = e.address || ""; // Set the value or default to an empty string if address is undefined
+
+    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
+    
+    // Ensure submitBtn is not null before accessing its properties
+    if (submitBtn) {
+      console.log(submitBtn.value); // This will log the value property of submitBtn if needed
+      submitBtn.disabled = !inputElement.value.trim(); // Enable the button only if input is not empty
+    }
   }
 });

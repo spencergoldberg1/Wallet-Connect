@@ -22,22 +22,31 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, "public")));
 
 // Wallet connection routes
+app.get("/", (req, res) => {
+  res.render("LandingPage.ejs")
+});
+
+// Wallet connection routes
 app.get("/wallet_connect/evm", (req, res) => {
   res.render("walletconnect.ejs");
+});
+
+app.post("/wallet_connect/evm", (req, res) => {
+  res.render("wallet_address_result.ejs", {wallet_address: req.body.wallet_address});
 });
 
 app.get("/wallet_connect/xrp", (req, res) => {
   res.render("xrp_walletconnect.ejs");
 });
 
-app.post("/address", (req, res) => {
+app.post("/wallet_connect/xrp", (req, res) => {
  
   res.render("wallet_address_result", {wallet_address: req.body.xrpAddress})
 });
 
 // XUMM OAuth initiation
 app.get("/xumm/sign_in", (req, res) => {
-  const redirectUri = `${process.env.XUMM_BASE_URL}/xrp_sign-in/xumm/complete`;
+  const redirectUri = `${process.env.BASE_URL}/xrp_sign-in/xumm/complete`;
   const responseType = "token";
   const oauthUrl = `https://oauth2.xumm.app/auth?client_id=${
     process.env.XUMM_API_KEY

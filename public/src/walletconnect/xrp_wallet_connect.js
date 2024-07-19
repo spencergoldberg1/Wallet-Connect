@@ -34,14 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
   
   function generateXummHTML() {
     return `<div style="text-align: center;">
-      <button class="slds-button slds-button_brand slds-m-top_small" onclick="window.location.href = '${process.env.XUMM_BASE_URL}/xumm/sign_in';">Connect to Xumm</button>
+      <button class="slds-button slds-button_brand slds-m-top_small" onclick="window.location.href = '${process.env.BASE_URL}/xumm/sign_in';">Connect to Xumm</button>
     </div>`;
   }
   
   function generateAddressInputHTML() {
     // This function returns HTML for a form that posts to the "/address" endpoint.
     // The form includes a single input field for an XRP address and a submit button.
-    return `<form action="/address" method="POST" style="text-align: center; margin-top: 20px;">
+    return `<form method="POST" style="text-align: center; margin-top: 20px;">
   <div class="slds-form-element">
     <div class="slds-form-element__control">
       <input type="text" id="xrp-address" name="xrpAddress" class="slds-input" placeholder="XRP Address" required>
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="progress-step hidden"><i class="fas fa-spinner fa-spin"></i> Retrieving account information...</div>
       </div>
       <div id="error-message" class="error-message hidden"></div>
-      <form action="/address" method="POST" style="text-align: center;">
+      <form method="POST" style="text-align: center;">
         <div id="accounts-page" class="hidden">
           <div id="addresses-container" style="margin-bottom: 10px;"></div>
           <div style="display: flex; justify-content: space-between;">

@@ -24,17 +24,18 @@
 <body class="slds-scope">
     <div class="slds-container--medium slds-box slds-theme--default">
         <h1 class="slds-text-heading--large slds-text-align--center">Wallet Connect</h1>
-        <form class="slds-form--stacked">
+        <form id="walletForm" method="POST" class="slds-form--stacked">
             <div class="slds-form-element">
                 <label class="slds-form-element__label" for="wallet_address">Wallet Address</label>
                 <div class="slds-form-element__control">
-                    <input type="text" id="wallet_address" class="slds-input" placeholder="My Wallet Address" readonly>
+                    <input type="text" id="wallet_address" name="wallet_address" class="slds-input" placeholder="My Wallet Address" readonly>
                 </div>
             </div>
+            <div class="slds-m-top--large">
+              <w3m-button></w3m-button>
+            </div>
+            <button type="submit" id="submitBtn" class="slds-button slds-button_brand slds-m-top_medium" disabled>Submit</button>
         </form>
-        <div id="app" class="slds-m-top--large">
-            <w3m-button></w3m-button>
-        </div>
     </div>
     <script type="module" src="/src/wallet_connect/wallet_connect/bundle.js"></script>
 </body>
