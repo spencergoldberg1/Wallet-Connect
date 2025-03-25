@@ -20,19 +20,11 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .w3m-account-button-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
         .divider {
             margin: 30px 0;
             font-weight: bold;
             font-size: 1em;
             color: #6c757d;
-        }
-        .address-input-container {
-            margin-bottom: 20px;
         }
         .wallet-input {
             padding: 10px;
@@ -40,6 +32,8 @@
             width: 100%;
             border: 1px solid #ccc;
             border-radius: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
         }
         .submit-btn {
             padding: 10px 20px;
@@ -65,27 +59,65 @@
         <div class="wallet-container slds-box slds-theme_default">
             <h2 class="slds-text-heading_medium">Connect Your Wallet</h2>
             <p class="slds-text-body_regular">To proceed, please connect your wallet via Wallet Connect or manually enter your address.</p>
-
-            <div class="w3m-account-button-container">
-                <w3m-connect-button></w3m-connect-button>
-            </div>
-
             <div class="divider">or</div>
 
             <form method="POST">
                 <div class="address-input-container">
                     <input type="text" class="wallet-input" id="walletAddressInput" name="walletAddress" placeholder="Enter wallet address">
                 </div>
-
                 <div class="address-input-container">
                     <input type="text" class="wallet-input" id="walletNameInput" name="walletName" placeholder="Enter wallet name (optional)">
                 </div>
-
                 <button type="submit" class="submit-btn" id="submitButton" disabled>Submit</button>
             </form>
         </div>
     </div>
 
-    <script src="/src/wallet_connect/wallet_connect/bundle.js"></script>
+    <script type="module">
+        import { initializeLucid, generateSeedPhrase } from "/src/wallet_connect/lucid/bundle.js";
+
+        // Enable submit button when wallet address is entered
+        const walletInput = document.getElementById('walletAddressInput');
+        const submitButton = document.getElementById('submitButton');
+
+        walletInput.addEventListener('input', () => {
+            submitButton.disabled = !walletInput.value.trim();
+        });
+
+        // Initialize Lucid
+        (async () => {
+            try {
+                const projectId = 'mainnetZ6OF7izLUKgpOZNFbK5io4cZL6ZAVZGb';
+                console.log('Initializing Lucid with project ID:', projectId);
+                
+                const lucid = await initializeLucid(projectId);
+                
+                console.log('Lucid initialized successfully');
+                console.log('Lucid instance:', lucid);
+                
+                if (lucid) {
+                    console.log('Lucid network:', await lucid.network);
+                    const seedPhrase = generateSeedPhrase(); // BIP-39
+
+                    console.log('Lucid wallet:', seedPhrase);
+
+                    let wallet = lucid.selectWalletFromSeed(seedPhrase)
+
+                    console.log(wallet)
+
+                    const address = await lucid.wallet.address()
+
+                    console.log(address)
+
+
+                }
+            } catch (error) {
+                console.error('Lucid initialization failed:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+            }
+        })();
+    </script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers";
 
-// 1. Get projectId from https://cloud.walletconnect.com
+// 1. Get projectId from environment
 const projectId = process.env.WALLET_CONNECT_PROJECT_ID;
 
-// 2. Set chains
+// 2. Define network configurations
 const mainnet = {
   chainId: 1,
   name: "Ethereum",
@@ -78,18 +78,37 @@ const modal = createWeb3Modal({
 });
 
 modal.subscribeProvider((e: { address?: string }) => {
-  const inputElement = document.getElementById("wallet_address") as HTMLInputElement | null;
+  const walletAddressInput = document.getElementById("walletAddressInput") as HTMLInputElement | null;
+  const walletNameInput = document.getElementById("walletNameInput") as HTMLInputElement | null;
+  const submitBtn = document.getElementById('submitButton') as HTMLButtonElement | null;
 
-  // Check if the input element exists in the DOM
-  if (inputElement) {
-    inputElement.value = e.address || ""; // Set the value or default to an empty string if address is undefined
+  // Function to check the validity of inputs and enable/disable submit button
+  const validateInputs = () => {
+    const walletAddressValue = walletAddressInput?.value || "";
+    const walletAddressValid = walletAddressValue.startsWith("0x") && walletAddressValue.length === 42 && /^[0-9a-fA-F]+$/.test(walletAddressValue.slice(2));
+    const walletNameValid = walletNameInput ? walletNameInput.value.trim().length > 0 : true;
 
-    const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement | null;
-    
-    // Ensure submitBtn is not null before accessing its properties
+    console.log(`Wallet Address: ${walletAddressValue}`);
+    console.log(`Is Wallet Address Valid: ${walletAddressValid}`);
+
     if (submitBtn) {
-      console.log(submitBtn.value); // This will log the value property of submitBtn if needed
-      submitBtn.disabled = !inputElement.value.trim(); // Enable the button only if input is not empty
+      submitBtn.disabled = !(walletAddressValid && walletNameValid);
+      console.log(`Submit Button Disabled: ${submitBtn.disabled}`);
     }
+  };
+
+  // Set wallet address value and validate inputs
+  if (walletAddressInput) {
+    walletAddressInput.value = e.address || "";
+    validateInputs();
   }
+
+  // Add event listeners to inputs for validation
+  walletAddressInput?.addEventListener('input', () => {
+    validateInputs();
+  });
+
+  walletNameInput?.addEventListener('input', () => {
+    validateInputs();
+  });
 });

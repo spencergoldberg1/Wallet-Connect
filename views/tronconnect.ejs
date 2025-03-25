@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/salesforce-lightning-design-system/2.15.4/styles/salesforce-lightning-design-system.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <title>Wallet Connect Page</title>
+    <title>Tron Wallet Connect Page</title>
     <style>
         body {
             background-color: #f0f4ff;
@@ -20,10 +20,17 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
-        .w3m-account-button-container {
+        .wallet-button-container {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+        }
+        .dropdown {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
         }
         .divider {
             margin: 30px 0;
@@ -41,7 +48,7 @@
             border: 1px solid #ccc;
             border-radius: 10px;
         }
-        .submit-btn {
+        .connect-btn {
             padding: 10px 20px;
             font-size: 1em;
             color: white;
@@ -51,10 +58,10 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        .submit-btn:hover {
+        .connect-btn:hover {
             background-color: #005bb5;
         }
-        .submit-btn:disabled {
+        .connect-btn:disabled, .submit-btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
         }
@@ -63,29 +70,34 @@
 <body>
     <div class="slds-grid slds-grid_vertical-align-center slds-grid_align-center">
         <div class="wallet-container slds-box slds-theme_default">
-            <h2 class="slds-text-heading_medium">Connect Your Wallet</h2>
-            <p class="slds-text-body_regular">To proceed, please connect your wallet via Wallet Connect or manually enter your address.</p>
+            <h2 class="slds-text-heading_medium">Connect Your Tron Wallet</h2>
+            <p class="slds-text-body_regular">To proceed, please connect your wallet via one of the supported methods or manually enter your Tron address.</p>
 
-            <div class="w3m-account-button-container">
-                <w3m-connect-button></w3m-connect-button>
+            <label for="walletSelect">Choose your wallet:</label>
+            <select id="walletSelect" class="dropdown">
+                <option value="" disabled selected>Select a wallet</option>
+                <option value="tronlink">TronLink</option>
+                <option value="ledger">Ledger</option>
+            </select>
+
+            <div class="wallet-button-container">
+                <button id="connectWalletButton" class="connect-btn" disabled>Connect</button>
             </div>
 
             <div class="divider">or</div>
 
             <form method="POST">
                 <div class="address-input-container">
-                    <input type="text" class="wallet-input" id="walletAddressInput" name="walletAddress" placeholder="Enter wallet address">
+                    <input type="text" class="wallet-input" id="tronAddressInput" name="tronAddress" placeholder="Enter Tron wallet address">
                 </div>
 
-                <div class="address-input-container">
-                    <input type="text" class="wallet-input" id="walletNameInput" name="walletName" placeholder="Enter wallet name (optional)">
-                </div>
-
-                <button type="submit" class="submit-btn" id="submitButton" disabled>Submit</button>
+                <button type="submit" class="connect-btn" id="submitButton" disabled>Submit</button>
             </form>
+
+            <p id="walletStatus" class="status">Please select a wallet to connect.</p>
         </div>
     </div>
 
-    <script src="/src/wallet_connect/wallet_connect/bundle.js"></script>
+    <script src="/src/wallet_connect/tron_connect/bundle.js"></script>
 </body>
 </html>

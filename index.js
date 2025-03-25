@@ -31,9 +31,31 @@ app.get("/wallet_connect/evm", (req, res) => {
   res.render("walletconnect.ejs");
 });
 
+app.get("/wallet_connect/tron", (req, res) => {
+  res.render("tronconnect.ejs");
+});
+
+app.get("/wallet_connect/solana", (req, res) => {
+  res.render("solanaconnect.ejs");
+});
+
+app.post("/wallet_connect/solana", (req, res) => {
+  console.log(req.body)
+  res.render("wallet_address_result.ejs", {wallet_address: req.body.walletAddress});
+});
+
+app.get("/lucid", (req,res) => {
+  res.render("lucidpackage")
+})
+
 app.post("/wallet_connect/evm", (req, res) => {
   res.render("wallet_address_result.ejs", {wallet_address: req.body.wallet_address});
 });
+
+app.post("/wallet_connect/tron", (req, res) => {
+  res.render("wallet_address_result.ejs", {wallet_address: req.body.tronAddress});
+});
+
 
 app.get("/wallet_connect/xrp", (req, res) => {
   res.render("xrp_walletconnect.ejs");
