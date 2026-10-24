@@ -1,29 +1,18 @@
 const path = require("path");
 const webpack = require("webpack");
-const Dotenv = require("dotenv-webpack");
 
-module.exports = {
+const shared = {
   mode: "production", // 'production' for optimized output, 'development' for debuggable output
-  entry: {
-    wallet_connect: "./public/src/walletconnect/wallet_connect.ts",
-    tron_connect: "./public/src/walletconnect/tron_connect.js",
-    solana_connect: "./public/src/walletconnect/solana_connect.tsx",
-    lucid: "./public/src/walletconnect/Lucid.js",
-  },
-  output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name]/bundle.js", // Output files named and placed according to the entry configuration
-    chunkFilename: "[name].chunk.js", // Names dynamically loaded chunks
-    library: "MyLibrary", // Name of the global library
-    libraryTarget: "umd", // Universal Module Definition (UMD) for compatibility
-    umdNamedDefine: true, // Define the UMD name for AMD
-    globalObject: "this", // Ensure compatibility across different environments
-  },
+  devtool: "source-map", // Emit .map files next to every bundle and chunk
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
+        use: {
+          loader: "ts-loader",
+          // Type checking runs separately via `npm run typecheck`.
+          options: { transpileOnly: true, compilerOptions: { noEmit: false } },
+        },
         exclude: /node_modules/,
       },
       {
@@ -61,9 +50,9 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       Buffer: ["buffer", "Buffer"], // Polyfill Buffer using the 'buffer' package
-      process: "process/browser", // Polyfill process
+      // Absolute path: ESM packages (AppKit, WalletConnect) require fully specified requests.
+      process: require.resolve("process/browser"), // Polyfill process
     }),
-    new Dotenv(),
   ],
   optimization: {
     splitChunks: {
@@ -75,3 +64,39 @@ module.exports = {
     },
   },
 };
+
+module.exports = [
+  // Page scripts loaded with a plain <script> tag. They only touch the DOM, so they are
+  // emitted as browser scripts rather than a shared UMD global.
+  {
+    ...shared,
+    name: "pages",
+    entry: {
+      wallet_connect: "./public/src/walletconnect/wallet_connect.ts",
+      tron_connect: "./public/src/walletconnect/tron_connect.js",
+      solana_connect: "./public/src/walletconnect/solana_connect.tsx",
+    },
+    output: {
+      path: path.resolve(__dirname, "dist"),
+      filename: "[name]/bundle.js", // Output files named and placed according to the entry configuration
+      chunkFilename: "chunks/[name].[contenthash:8].js", // Lazily loaded chunks (e.g. Reown AppKit)
+      clean: { keep: /^(lucid|lib)\// },
+    },
+  },
+  // Lucid is imported by views/lucidpackage.ejs with `import { ... } from ".../bundle.js"`,
+  // so it must be an ES module (lucid-cardano also uses top-level await for its WASM).
+  {
+    ...shared,
+    name: "lucid",
+    entry: { lucid: "./public/src/walletconnect/Lucid.js" },
+    experiments: { outputModule: true },
+    output: {
+      path: path.resolve(__dirname, "dist/lucid"),
+      filename: "bundle.js",
+      chunkFilename: "chunks/[name].[contenthash:8].js",
+      assetModuleFilename: "assets/[hash][ext]",
+      library: { type: "module" },
+      clean: true,
+    },
+  },
+];

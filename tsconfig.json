@@ -1,21 +1,18 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx", // Enable JSX for React
-    "outDir": "./dist", // Output directory for compiled files
-    "module": "ES6", // Specify module code generation
-    "target": "ES5", // Target JavaScript version
-    "moduleResolution": "node", // Use Node.js-style module resolution
-    "sourceMap": true, // Generate source maps for debugging
-    "esModuleInterop": true, // Enable interoperation between CommonJS and ES Modules
-    "allowSyntheticDefaultImports": true // Allow default imports for modules without a default export
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "noEmit": true,
+    "types": []
   },
-  "include": [
-    "./public/src/**/*.ts", // Include all TypeScript files in the public/src directory
-    "./public/src/**/*.tsx", // Include all TypeScript JSX files
-    "./public/src/walletconnect/tron_connect.js", // Include this specific JavaScript file
-    "./public/src/walletconnect/solana_connect.tsx" // Include the Solana connect React component
-  ],
-  "exclude": [
-    "node_modules" // Exclude the node_modules directory from compilation
-  ]
+  "include": ["src/**/*.ts", "test/**/*.ts", "public/src/walletconnect/*.ts", "public/src/walletconnect/*.tsx", "tsup.config.ts", "vitest.config.mts"]
 }

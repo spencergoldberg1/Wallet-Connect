@@ -5,6 +5,9 @@ const path = require('path');
 const sourceDir = path.join(__dirname, 'dist');
 const destinationBaseDir = path.join(__dirname, 'public/src/wallet_connect');
 
+// The npm library build (tsup) also lives in dist/ but is not served to pages
+const skipPaths = new Set([path.join(sourceDir, 'lib')]);
+
 // Function to copy a file from source to destination with error handling
 function copyFile(sourceFile, destinationFile) {
     try {
@@ -26,6 +29,7 @@ function copyDirectory(sourceDir, destinationDir) {
         files.forEach(file => {
             const sourceFilePath = path.join(sourceDir, file);
             const destinationFilePath = path.join(destinationDir, file);
+            if (skipPaths.has(sourceFilePath)) return;
             const stats = fs.statSync(sourceFilePath);
 
             if (stats.isFile()) {
@@ -45,6 +49,9 @@ try {
     if (!fs.existsSync(sourceDir)) {
         throw new Error(`Source directory does not exist: ${sourceDir}`);
     }
+
+    // Start from an empty destination so stale chunks from older builds are not served
+    fs.rmSync(destinationBaseDir, { recursive: true, force: true });
 
     // Start copying process
     console.log(`Copying from ${sourceDir} to ${destinationBaseDir}`);
