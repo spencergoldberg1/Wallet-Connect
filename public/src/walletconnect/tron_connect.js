@@ -1,10 +1,11 @@
 import { TronLinkAdapter, LedgerAdapter, WalletConnectAdapter } from '@tronweb3/tronwallet-adapters';
 
-// Safely load the WalletConnect project ID, fallback if not set
-const projectId = process.env.WALLET_CONNECT_PROJECT_ID || 'your-fallback-project-id';
+// Project ID and app metadata are injected by the server from environment variables.
+const config = window.__WALLET_CONFIG__ || {};
+const projectId = config.projectId;
 
 if (!projectId) {
-  console.error('Error: WalletConnect project ID is not set. Please provide a valid project ID.');
+  console.error('WalletConnect project ID is not set. Set WALLET_CONNECT_PROJECT_ID on the server.');
 }
 
 // Initialize Tron wallet adapters (TronLink, Ledger, and WalletConnect)
@@ -12,14 +13,14 @@ const tronLinkAdapter = new TronLinkAdapter();
 const ledgerAdapter = new LedgerAdapter();
 const walletConnectAdapter = new WalletConnectAdapter({
   network: 'Mainnet',
-  options: { 
-    projectId: projectId,
+  options: {
+    projectId,
     relayUrl: 'wss://relay.walletconnect.com',
     metadata: {
-      name: 'JustLend',
-      description: 'JustLend WalletConnect',
-      url: 'https://muknweb3ca.mukn.com',
-      icons: ['https://app.justlend.org/mainLogo.svg'],
+      name: config.appName || 'Wallet Connect',
+      description: config.appDescription || 'Connect a Tron wallet with WalletConnect',
+      url: config.appUrl || window.location.origin,
+      icons: config.appIcon ? [config.appIcon] : [],
     }
   }
 });
@@ -44,7 +45,6 @@ function handleTronLinkError(error) {
 
 // Fallback to install TronLink (Mobile vs Desktop)
 function openTronLinkInstallPage() {
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   window.location.href = 'https://www.tronlink.org/';
 }
 
@@ -95,7 +95,8 @@ async function connectWalletConnect() {
     
     // If WalletConnect fails to launch, show the user what to do next
     if (error.message.includes('Failed to launch') || error.message.includes('scheme does not have a registered handler')) {
-      walletStatus.textContent = 'WalletConnect app not detected. Please install a compatible wallet like Trust Wallet or MetaMask.';
+      const walletStatus = document.getElementById('walletStatus');
+      if (walletStatus) walletStatus.textContent = 'WalletConnect app not detected. Please install a compatible wallet like Trust Wallet or MetaMask.';
       openWalletConnectInstallPage();
     } else {
       throw error;

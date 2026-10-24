@@ -73,6 +73,7 @@
         </div>
     </div>
 
+    <script>window.__WALLET_CONFIG__ = <%- walletConfigJson %>;</script>
     <script type="module">
         import { initializeLucid, generateSeedPhrase } from "/src/wallet_connect/lucid/bundle.js";
 
@@ -87,23 +88,18 @@
         // Initialize Lucid
         (async () => {
             try {
-                const projectId = 'mainnetZ6OF7izLUKgpOZNFbK5io4cZL6ZAVZGb';
-                console.log('Initializing Lucid with project ID:', projectId);
+                const { blockfrostProjectId, cardanoNetwork } = window.__WALLET_CONFIG__;
+                console.log('Initializing Lucid on', cardanoNetwork);
                 
-                const lucid = await initializeLucid(projectId);
+                const lucid = await initializeLucid(blockfrostProjectId, cardanoNetwork);
                 
                 console.log('Lucid initialized successfully');
                 console.log('Lucid instance:', lucid);
                 
                 if (lucid) {
                     console.log('Lucid network:', await lucid.network);
-                    const seedPhrase = generateSeedPhrase(); // BIP-39
-
-                    console.log('Lucid wallet:', seedPhrase);
-
-                    let wallet = lucid.selectWalletFromSeed(seedPhrase)
-
-                    console.log(wallet)
+                    // Throwaway demo wallet: the seed phrase stays in memory and is never logged.
+                    lucid.selectWalletFromSeed(generateSeedPhrase()); // BIP-39
 
                     const address = await lucid.wallet.address()
 
