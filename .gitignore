@@ -1,4 +1,8 @@
 node_modules/
 dist/
 public/src/wallet_connect/
+coverage/
 .env
+.env.*
+!.env.example
+.DS_Store

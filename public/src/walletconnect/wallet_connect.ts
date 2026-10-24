@@ -1,114 +1,103 @@
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers";
+import { isEvmAddress, shortenAddress } from '../../../src/validation';
+import type { EvmConnector, WalletState } from '../../../src/connector';
 
-// 1. Get projectId from environment
-const projectId = process.env.WALLET_CONNECT_PROJECT_ID;
-
-// 2. Define network configurations
-const mainnet = {
-  chainId: 1,
-  name: "Ethereum",
-  currency: "ETH",
-  explorerUrl: "https://etherscan.io",
-  rpcUrl: "https://cloudflare-eth.com",
-};
-
-const arbitrum = {
-  chainId: 42161,
-  name: "Arbitrum One",
-  currency: "ETH",
-  explorerUrl: "https://arbiscan.io",
-  rpcUrl: "https://arb1.arbitrum.io/rpc",
-};
-
-const polygon = {
-  chainId: 137,
-  name: "Polygon",
-  currency: "MATIC",
-  explorerUrl: "https://polygonscan.com",
-  rpcUrl: "https://polygon-rpc.com",
-};
-
-const optimism = {
-  chainId: 10,
-  name: "Optimism",
-  currency: "ETH",
-  explorerUrl: "https://optimistic.etherscan.io",
-  rpcUrl: "https://mainnet.optimism.io",
-};
-
-const zkSync = {
-  chainId: 324,
-  name: "zkSync",
-  currency: "ETH",
-  explorerUrl: "https://zkscan.io",
-  rpcUrl: "https://mainnet.era.zksync.io",
-};
-
-// Array of all networks
-const allNetworks = [mainnet, arbitrum, polygon, optimism, zkSync];
-
-// 3. Create your application's metadata object
-const metadata = {
-  name: "My Website",
-  description: "My Website description",
-  url: "https://mywebsite.com", // url must match your domain & subdomain
-  icons: ["https://avatars.mywebsite.com/"],
-};
-
-// 4. Create Ethers config
-const ethersConfig = defaultConfig({
-  /*Required*/
-  metadata,
-});
-
-// 5. Create a Web3Modal instance
-const modal = createWeb3Modal({
-  ethersConfig,
-  chains: allNetworks,
-  projectId,
-  enableAnalytics: true,
-  enableOnramp: true,
-  themeMode: 'dark',  // Set the theme mode explicitly
-  themeVariables: {
-    '--w3m-font-family': 'Arial, sans-serif',  // Example: Set the base font family
-    '--w3m-font-size-master': '12px',         // Base font size
-    '--w3m-border-radius-master': '8px',      // Base border radius
-    '--w3m-z-index': 1000                     // Z-index for the modal
+// Injected by the Express view from environment variables (see lib/client-config.js).
+declare global {
+  interface Window {
+    __WALLET_CONFIG__?: {
+      projectId?: string;
+      chainIds?: string;
+      appName?: string;
+      appDescription?: string;
+      appUrl?: string;
+      appIcon?: string;
+    };
   }
-});
+}
 
-modal.subscribeProvider((e: { address?: string }) => {
-  const walletAddressInput = document.getElementById("walletAddressInput") as HTMLInputElement | null;
-  const walletNameInput = document.getElementById("walletNameInput") as HTMLInputElement | null;
-  const submitBtn = document.getElementById('submitButton') as HTMLButtonElement | null;
+const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
 
-  // Function to check the validity of inputs and enable/disable submit button
-  const validateInputs = () => {
-    const walletAddressValue = walletAddressInput?.value || "";
-    const walletAddressValid = walletAddressValue.startsWith("0x") && walletAddressValue.length === 42 && /^[0-9a-fA-F]+$/.test(walletAddressValue.slice(2));
-    const walletNameValid = walletNameInput ? walletNameInput.value.trim().length > 0 : true;
+async function start() {
+  const connectBtn = byId<HTMLButtonElement>('connectButton');
+  const disconnectBtn = byId<HTMLButtonElement>('disconnectButton');
+  const statusEl = byId<HTMLElement>('walletStatus');
+  const addressInput = byId<HTMLInputElement>('walletAddressInput');
+  const submitBtn = byId<HTMLButtonElement>('submitButton');
 
-    console.log(`Wallet Address: ${walletAddressValue}`);
-    console.log(`Is Wallet Address Valid: ${walletAddressValid}`);
-
-    if (submitBtn) {
-      submitBtn.disabled = !(walletAddressValid && walletNameValid);
-      console.log(`Submit Button Disabled: ${submitBtn.disabled}`);
-    }
+  const setStatus = (text: string, isError = false) => {
+    if (!statusEl) return;
+    statusEl.textContent = text;
+    statusEl.classList.toggle('error', isError);
   };
 
-  // Set wallet address value and validate inputs
-  if (walletAddressInput) {
-    walletAddressInput.value = e.address || "";
-    validateInputs();
+  const validate = () => {
+    if (submitBtn && addressInput) submitBtn.disabled = !isEvmAddress(addressInput.value);
+  };
+  addressInput?.addEventListener('input', validate);
+
+  const config = window.__WALLET_CONFIG__ ?? {};
+  let connector: EvmConnector;
+  try {
+    // AppKit is large; load it as a separate chunk so the form is usable immediately.
+    const { createEvmConnector } = await import(/* webpackChunkName: "appkit" */ '../../../src/connector');
+    connector = createEvmConnector({
+      projectId: config.projectId,
+      chainIds: config.chainIds,
+      metadata: {
+        name: config.appName,
+        description: config.appDescription,
+        url: config.appUrl || undefined,
+        icons: config.appIcon ? [config.appIcon] : undefined,
+      },
+      themeMode: 'dark',
+    });
+  } catch (error) {
+    setStatus((error as Error).message, true);
+    if (connectBtn) connectBtn.disabled = true;
+    return;
   }
 
-  // Add event listeners to inputs for validation
-  walletAddressInput?.addEventListener('input', () => {
-    validateInputs();
+  const render = (state: WalletState) => {
+    if (connectBtn) connectBtn.hidden = state.isConnected;
+    if (disconnectBtn) disconnectBtn.hidden = !state.isConnected;
+    if (state.isConnected && state.address) {
+      setStatus(`Connected: ${shortenAddress(state.address)} (chain ${state.chainId ?? '?'})`);
+      if (addressInput) addressInput.value = state.address;
+    } else if (state.status === 'connecting' || state.status === 'reconnecting') {
+      setStatus(state.status === 'reconnecting' ? 'Restoring previous session…' : 'Connecting…');
+    } else {
+      setStatus('Not connected.');
+    }
+    validate();
+  };
+  connector.subscribe(render);
+
+  connectBtn?.addEventListener('click', async () => {
+    connectBtn.disabled = true;
+    try {
+      await connector.connect();
+    } catch (error) {
+      setStatus((error as Error).message, true);
+    } finally {
+      connectBtn.disabled = false;
+    }
   });
 
-  walletNameInput?.addEventListener('input', () => {
-    validateInputs();
+  disconnectBtn?.addEventListener('click', async () => {
+    try {
+      await connector.disconnect();
+      if (addressInput) addressInput.value = '';
+      validate();
+    } catch (error) {
+      setStatus((error as Error).message, true);
+    }
   });
-});
+
+  connector
+    .restoreSession()
+    .then(render)
+    .catch((error: Error) => setStatus(error.message, true));
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => void start());
+else void start();

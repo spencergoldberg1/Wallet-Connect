@@ -4,8 +4,8 @@ const cors = require("cors");
 const { XummSdkJwt } = require("xumm-sdk");
 const dotenv = require("dotenv");
 const axios = require("axios");
+const { buildClientConfig, serializeForScript } = require("./lib/client-config");
 dotenv.config();
-const bodyParser = require("body-parser");
 
 const app = express();
 
@@ -16,7 +16,14 @@ app.use(express.urlencoded({ extended: true }));
 // Set up EJS as the view engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-app.use(bodyParser.json())
+app.use(express.json());
+
+// Browser-safe config (WalletConnect project ID, chains, app metadata) for every view.
+const walletConfigJson = serializeForScript(buildClientConfig());
+app.use((req, res, next) => {
+  res.locals.walletConfigJson = walletConfigJson;
+  next();
+});
 
 // Serve static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -40,7 +47,6 @@ app.get("/wallet_connect/solana", (req, res) => {
 });
 
 app.post("/wallet_connect/solana", (req, res) => {
-  console.log(req.body)
   res.render("wallet_address_result.ejs", {wallet_address: req.body.walletAddress});
 });
 
@@ -49,7 +55,10 @@ app.get("/lucid", (req,res) => {
 })
 
 app.post("/wallet_connect/evm", (req, res) => {
-  res.render("wallet_address_result.ejs", {wallet_address: req.body.wallet_address});
+  // The form field is "walletAddress"; "wallet_address" is accepted for older clients.
+  res.render("wallet_address_result.ejs", {
+    wallet_address: req.body.walletAddress || req.body.wallet_address,
+  });
 });
 
 app.post("/wallet_connect/tron", (req, res) => {
@@ -82,7 +91,6 @@ app.get("/xumm/sign_in", (req, res) => {
     return;
   }
 
-  console.log("Redirecting to OAuth URL:", oauthUrl);
   res.redirect(oauthUrl);
 });
 
