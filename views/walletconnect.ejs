@@ -54,6 +54,13 @@
         .submit-btn:hover {
             background-color: #005bb5;
         }
+        .wallet-status {
+            margin-bottom: 10px;
+            color: #444;
+        }
+        .wallet-status.error {
+            color: #c23934;
+        }
         .submit-btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
@@ -67,8 +74,10 @@
             <p class="slds-text-body_regular">To proceed, please connect your wallet via Wallet Connect or manually enter your address.</p>
 
             <div class="w3m-account-button-container">
-                <w3m-connect-button></w3m-connect-button>
+                <button type="button" class="submit-btn" id="connectButton">Connect Wallet</button>
+                <button type="button" class="submit-btn" id="disconnectButton" hidden>Disconnect</button>
             </div>
+            <p id="walletStatus" class="wallet-status" role="status" aria-live="polite">Loading…</p>
 
             <div class="divider">or</div>
 
@@ -86,6 +95,7 @@
         </div>
     </div>
 
+    <script>window.__WALLET_CONFIG__ = <%- walletConfigJson %>;</script>
     <script src="/src/wallet_connect/wallet_connect/bundle.js"></script>
 </body>
 </html>
