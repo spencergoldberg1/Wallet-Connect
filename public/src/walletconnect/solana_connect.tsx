@@ -28,7 +28,7 @@ declare global {
 const WalletDetails: FC = () => {
     const { publicKey, disconnect } = useWallet();
     const [needsWalletName, setNeedsWalletName] = useState<boolean>(false);
-    const [walletNameValid, setWalletNameValid] = useState<boolean>(false);
+    const [, setWalletNameValid] = useState<boolean>(false);
     const [walletAddressValid, setWalletAddressValid] = useState<boolean>(false);
 
     useEffect(() => {
@@ -180,7 +180,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('submitButton') as HTMLButtonElement;
 
     let walletNameInput: HTMLInputElement | null = null;
-    let walletNameValid = false;
 
     if (needsWalletName) {
         walletNameInput = document.getElementById('walletNameInput') as HTMLInputElement;
